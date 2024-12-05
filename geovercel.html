@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reverse Geocoding</title>
+    <script>
+        // Lấy tọa độ từ URL và thực hiện reverse geocoding
+        async function getAddress() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const lat = urlParams.get('lat');
+            const lng = urlParams.get('lng');
+
+            if (!lat || !lng) {
+                postResult("error", "Không có tọa độ trong URL.");
+                return;
+            }
+
+            const apiKey = "mCTsP9i1RSee5Q2df9p57Gvseo9aueYfgdWDKaZO"; // Thay bằng API key của bạn
+            const apiURL = `https://rsapi.goong.io/Geocode?latlng=${lat},${lng}&api_key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiURL);
+                const data = await response.json();
+                if (data.results && data.results.length > 0) {
+                    postResult("success", data.results[0].formatted_address);
+                } else {
+                    postResult("error", "Không tìm thấy địa chỉ.");
+                }
+            } catch (error) {
+                postResult("error", "Lỗi kết nối tới API.");
+            }
+        }
+
+        // Gửi kết quả địa chỉ ra ngoài iframe qua postMessage
+        function postResult(status, message) {
+            const result = { status, message };
+            window.parent.postMessage(result, "*"); // Gửi tới bất kỳ nguồn nào
+        }
+
+        // Khởi chạy khi trang tải xong
+        window.onload = getAddress;
+    </script>
+</head>
+<body>
+    <h1>Reverse Geocoding</h1>
+    <p>Đang xử lý tọa độ từ URL để tìm địa chỉ...</p>
+</body>
+</html>
