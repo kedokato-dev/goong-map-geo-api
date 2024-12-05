@@ -36,6 +36,7 @@
         function postResult(status, message) {
             const result = { status, message };
             window.parent.postMessage(result, "*"); // Gửi tới bất kỳ nguồn nào
+            alert("Kết quả: " + message); // Hiển thị thông báo với thông điệp
         }
 
         // Khởi chạy khi trang tải xong
